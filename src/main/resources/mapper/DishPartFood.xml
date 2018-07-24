@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="DishPartFood">
+
+    <insert id="insert" parameterType="DishPartFood" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO dish_part_food (
+            dish_part_id,
+            food_ndbno)
+        VALUES (
+            #{dishPart.id},
+            #{food.ndbNo})
+    </insert>
+
+    <delete id="deleteAll" parameterType="int">
+        DELETE FROM dish_part_food
+        WHERE dish_part_id IN (
+            SELECT
+                id
+            FROM dish_part
+            WHERE dish_id = #{dishId})
+    </delete>
+
+</mapper>

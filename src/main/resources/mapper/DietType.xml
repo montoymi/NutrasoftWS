@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="DietType">
+
+    <resultMap id="selectResult" type="DietType">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="description" column="description"/>
+    </resultMap>
+
+    <select id="selectAll" parameterType="String" resultMap="selectResult">
+        SELECT
+            dt.id,
+            dtl.name,
+            dtl.description
+        FROM diet_type dt, diet_type_lang dtl
+        WHERE dt.id = dtl.diet_type_id AND dtl.lang = #{lang}
+    </select>
+
+</mapper>

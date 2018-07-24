@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Weight">
+
+    <resultMap id="selectByNdbnoResult" type="Weight">
+        <result property="food.ndbNo" column="ndb_no"/>
+        <result property="seq" column="seq"/>
+        <result property="amount" column="amount"/>
+        <result property="measure" column="name"/>
+        <result property="weight" column="gm_wgt"/>
+    </resultMap>
+
+    <select id="selectByNdbno" parameterType="map" resultMap="selectByNdbnoResult">
+        SELECT
+            w.ndb_no,
+            w.seq,
+            w.amount,
+            ml.name,
+            w.gm_wgt
+        FROM sr28.weight w, measure m, measure_lang ml
+        WHERE w.NDB_No = m.ndbno
+              AND w.Seq = m.seq
+              AND m.ndbno = ml.measure_ndbno
+              AND m.seq = ml.measure_seq
+              AND ml.lang = #{lang}
+              AND w.ndb_no = #{ndbno}
+    </select>
+
+</mapper>

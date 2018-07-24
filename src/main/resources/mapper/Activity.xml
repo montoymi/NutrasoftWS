@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Activity">
+
+    <resultMap id="selectResult" type="Activity">
+        <id property="id" column="activity_class_id"/>
+        <result property="name" column="activity_class_name"/>
+        <collection property="activityList" ofType="Activity">
+            <id property="id" column="activity_type_id"/>
+            <result property="name" column="activity_type_name"/>
+            <collection property="activityList" ofType="Activity">
+                <id property="id" column="activity_id"/>
+                <result property="name" column="activity_name"/>
+                <result property="malePar" column="male_par"/>
+                <result property="femalePar" column="female_par"/>
+            </collection>
+        </collection>
+    </resultMap>
+
+    <select id="selectAll" parameterType="String" resultMap="selectResult">
+        SELECT
+            c.id    activity_class_id,
+            cl.name activity_class_name,
+            t.id    activity_type_id,
+            tl.name activity_type_name,
+            a.id    activity_id,
+            al.name activity_name,
+            a.male_par,
+            a.female_par
+        FROM
+            activity_type c,
+            activity_type_lang cl,
+            activity_type t,
+            activity_type_lang tl,
+            activity a,
+            activity_lang al
+        WHERE
+            c.id = cl.activity_type_id
+            AND t.id = tl.activity_type_id
+            AND a.id = al.activity_id
+            AND c.id = t.activity_class_id
+            AND t.id = a.activity_type_id
+            AND cl.lang = #{lang}
+            AND tl.lang = #{lang}
+            AND al.lang = #{lang}
+    </select>
+
+</mapper>

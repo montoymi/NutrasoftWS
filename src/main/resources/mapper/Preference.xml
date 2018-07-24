@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Preference">
+
+    <resultMap id="selectResult" type="Preference">
+        <result property="user.id" column="user_id"/>
+        <result property="dietType.id" column="diet_type_id"/>
+        <result property="dietType.name" column="diet_type_name"/>
+        <result property="mealCount" column="meal_count"/>
+        <collection property="excludedFoodList" ofType="ExcludedFood">
+            <id property="id" column="excluded_food_id"/>
+            <result property="food.ndbNo" column="food_ndbno"/>
+            <result property="food.name" column="food_name"/>
+        </collection>
+    </resultMap>
+
+    <insert id="insert" parameterType="Preference">
+        INSERT INTO preference (
+            user_id,
+            diet_type_id,
+            meal_count)
+        VALUES (
+            #{user.id},
+            #{dietType.id},
+            #{mealCount})
+    </insert>
+
+    <update id="update" parameterType="Preference">
+        UPDATE preference
+        SET
+            diet_type_id = #{dietType.id},
+            meal_count   = #{mealCount}
+        WHERE user_id = #{user.id}
+    </update>
+
+    <select id="selectById" parameterType="map" resultMap="selectResult">
+        SELECT
+            p.user_id,
+            p.diet_type_id,
+            dtl.name diet_type_name,
+            p.meal_count,
+            ef.id,
+            ef.food_ndbno,
+            fl.name  food_name
+        FROM preference p
+            INNER JOIN diet_type dt ON p.diet_type_id = dt.id
+            INNER JOIN diet_type_lang dtl ON dt.id = dtl.diet_type_id AND dtl.lang = #{lang}
+            LEFT JOIN excluded_food ef ON p.user_id = ef.preference_user_id
+            LEFT JOIN food f ON ef.food_ndbno = f.ndbno
+            LEFT JOIN food_lang fl ON f.ndbno = fl.food_ndbno AND fl.lang = #{lang}
+        WHERE p.user_id = #{userId}
+    </select>
+
+</mapper>

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Menu">
+
+    <resultMap id="selectResult" type="Menu">
+        <id property="id" column="id"/>
+        <result property="coach.id" column="coach_id"/>
+        <result property="dietType.id" column="diet_type_id"/>
+        <result property="week" column="week"/>
+        <result property="day" column="day"/>
+        <result property="dietType.name" column="diet_type_name"/>
+        <collection property="menuMealList" ofType="MenuMeal">
+            <id property="id" column="menu_meal_id"/>
+            <result property="meal.id" column="meal_id"/>
+            <result property="dish.id" column="dish_id"/>
+            <result property="meal.name" column="meal_name"/>
+            <result property="dish.name" column="dish_name"/>
+        </collection>
+    </resultMap>
+
+    <!-- Segundo resultMap que permite agrupar menus por tipo de dieta -->
+    <resultMap id="selectResult2" type="DietType">
+        <result property="name" column="diet_type_name"/>
+        <collection property="menuList" ofType="Menu">
+            <id property="id" column="id"/>
+            <result property="coach.id" column="coach_id"/>
+            <result property="week" column="week"/>
+            <result property="day" column="day"/>
+        </collection>
+    </resultMap>
+
+    <insert id="insert" parameterType="Menu" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO menu (
+            coach_id,
+            diet_type_id,
+            week,
+            day)
+        VALUES (
+            #{coach.id},
+            #{dietType.id},
+            #{week},
+            #{day})
+    </insert>
+
+    <update id="update" parameterType="Menu">
+        UPDATE menu
+        SET
+            coach_id     = #{coach.id},
+            diet_type_id = #{dietType.id},
+            week         = #{week},
+            day          = #{day}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="int">
+        DELETE FROM menu
+        WHERE id = #{id}
+    </delete>
+
+    <select id="selectLast" parameterType="map" resultMap="selectResult">
+        SELECT
+            m.id,
+            m.coach_id,
+            m.diet_type_id,
+            m.week,
+            m.day
+        FROM menu m
+        WHERE m.coach_id = #{coachId} AND m.diet_type_id = #{dietTypeId}
+        ORDER BY id DESC
+        LIMIT 1
+    </select>
+
+    <select id="selectById" parameterType="map" resultMap="selectResult">
+        SELECT
+            m.id,
+            m.coach_id,
+            m.diet_type_id,
+            m.week,
+            m.day,
+            dtl.name diet_type_name,
+            mm.id    menu_meal_id,
+            mm.meal_id,
+            mm.dish_id,
+            ml.name  meal_name,
+            d.name   dish_name
+        FROM menu m, diet_type dt, diet_type_lang dtl, menu_meal mm, meal me, meal_lang ml, dish d
+        WHERE m.diet_type_id = dt.id
+              AND dt.id = dtl.diet_type_id
+              AND m.id = mm.menu_id
+              AND mm.meal_id = me.id
+              AND me.id = ml.meal_id
+              AND mm.dish_id = d.id
+              AND dtl.lang = #{lang}
+              AND ml.lang = #{lang}
+              AND m.id = #{id}
+    </select>
+
+    <select id="selectByCoachId" parameterType="map" resultMap="selectResult2">
+        SELECT
+            m.id,
+            m.coach_id,
+            m.week,
+            m.day,
+            dtl.name diet_type_name
+        FROM menu m, diet_type dt, diet_type_lang dtl
+        WHERE m.diet_type_id = dt.id
+              AND dt.id = dtl.diet_type_id
+              AND dtl.lang = #{lang}
+              AND m.coach_id = #{coachId}
+    </select>
+
+</mapper>

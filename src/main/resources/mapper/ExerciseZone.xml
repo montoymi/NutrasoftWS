@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ExerciseZone">
+
+    <resultMap id="selectResult" type="ExerciseZone">
+        <id property="activity.id" column="activity_id"/>
+        <result property="code" column="code"/>
+        <result property="hrMaxPctMin" column="hr_max_pct_min"/>
+        <result property="hrMaxPctMax" column="hr_max_pct_max"/>
+        <result property="exerciseType" column="exercise_type"/>
+        <result property="proBodywt" column="pro_bodywt_g"/>
+    </resultMap>
+
+    <select id="selectAll" parameterType="String" resultMap="selectResult">
+        SELECT
+            activity_id,
+            code,
+            hr_max_pct_min,
+            hr_max_pct_max,
+            exercise_type,
+            pro_bodywt_g
+        FROM exercise_zone
+    </select>
+
+</mapper>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Food">
+
+    <resultMap id="selectResult" type="FoodGroup">
+        <id property="id" column="id"/>
+        <result property="name" column="food_group_name"/>
+        <collection property="foodList" ofType="Food">
+            <id property="ndbNo" column="ndbno"/>
+            <result property="name" column="food_name"/>
+        </collection>
+    </resultMap>
+
+    <select id="selectAll" parameterType="String" resultMap="selectResult">
+        SELECT
+            fg.id,
+            fgl.name food_group_name,
+            f.ndbno,
+            fl.name  food_name
+        FROM
+            food_group fg,
+            food_group_lang fgl,
+            food f,
+            food_lang fl
+        WHERE
+            fg.id = fgl.food_group_id
+            AND fg.id = f.food_group_id
+            AND f.ndbno = fl.food_ndbno
+            AND fgl.lang = #{lang}
+            AND fl.lang = #{lang}
+        ORDER BY fgl.name, fl.name
+    </select>
+
+</mapper>

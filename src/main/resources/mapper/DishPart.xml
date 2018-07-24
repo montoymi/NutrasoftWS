@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="DishPart">
+
+    <insert id="insert" parameterType="DishPart" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO dish_part (
+            dish_id,
+            part_code)
+        VALUES (
+            #{dish.id},
+            #{partCode})
+    </insert>
+
+    <update id="update" parameterType="DishPart">
+        UPDATE dish_part
+        SET
+            dish_id   = #{dish.id},
+            part_code = #{partCode}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteAll" parameterType="int">
+        DELETE FROM dish_part
+        WHERE dish_id = #{dishId}
+    </delete>
+
+</mapper>

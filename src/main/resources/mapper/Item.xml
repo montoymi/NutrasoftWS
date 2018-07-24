@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Item">
+
+    <resultMap id="selectResult" type="Item">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+    </resultMap>
+
+    <select id="selectAllGoals" parameterType="String" resultMap="selectResult">
+        SELECT
+            i.id,
+            l.name
+        FROM goal i, goal_lang l
+        WHERE i.id = l.goal_id AND l.lang = #{lang}
+    </select>
+
+</mapper>

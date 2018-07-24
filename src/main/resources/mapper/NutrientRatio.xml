@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="NutrientRatio">
+
+    <resultMap id="selectResult" type="NutrientRatio">
+        <result property="id" column="id"/>
+        <result property="goal.id" column="goal_id"/>
+        <result property="biotype" column="biotype"/>
+        <result property="proEnergPctMin" column="pro_energ_pct_min"/>
+        <result property="proEnergPctMax" column="pro_energ_pct_max"/>
+        <result property="choEnergPctMin" column="cho_energ_pct_min"/>
+        <result property="choEnergPctMax" column="cho_energ_pct_max"/>
+        <result property="fatEnergPctMin" column="fat_energ_pct_min"/>
+        <result property="fatEnergPctMax" column="fat_energ_pct_max"/>
+    </resultMap>
+
+    <select id="selectByParams" parameterType="NutrientRatio" resultMap="selectResult">
+        SELECT
+            nr.id,
+            nr.goal_id,
+            nr.biotype,
+            nr.pro_energ_pct_min,
+            nr.pro_energ_pct_max,
+            nr.cho_energ_pct_min,
+            nr.cho_energ_pct_max,
+            nr.fat_energ_pct_min,
+            nr.fat_energ_pct_max
+        FROM nutrient_ratio nr
+        WHERE nr.goal_id = #{goal.id}
+              AND nr.biotype = #{biotype}
+    </select>
+
+</mapper>

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="User">
+
+    <resultMap id="selectResult" type="User">
+        <result property="id" column="id"/>
+        <result property="coach.id" column="coach_id"/>
+        <result property="coach.name" column="coach_name"/>
+        <result property="userType" column="user_type"/>
+        <result property="name" column="name"/>
+        <result property="gender" column="gender"/>
+        <result property="birthdate" column="birthdate"/>
+        <result property="email" column="email"/>
+        <result property="phone" column="phone"/>
+        <result property="photo" column="photo"/>
+        <result property="summary" column="summary"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="User" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user (
+            coach_id,
+            user_type,
+            name,
+            gender,
+            birthdate,
+            email,
+            phone,
+            photo,
+            summary)
+        VALUES (
+            #{coach.id},
+            #{userType},
+            #{name},
+            #{gender},
+            #{birthdate},
+            #{email},
+            #{phone},
+            #{photo},
+            #{summary})
+    </insert>
+
+    <update id="update" parameterType="User">
+        UPDATE user
+        SET
+            coach_id  = #{coach.id},
+            user_type = #{userType},
+            name      = #{name},
+            gender    = #{gender},
+            birthdate = #{birthdate},
+            email     = #{email},
+            phone     = #{phone},
+            photo     = IF(#{photo} IS NOT NULL, #{photo}, photo),
+            summary   = #{summary}
+        WHERE id = #{id}
+    </update>
+
+    <select id="selectById" parameterType="int" resultMap="selectResult">
+        SELECT
+            id,
+            photo
+        FROM user
+        WHERE id = #{id}
+    </select>
+
+    <select id="selectByEmail" parameterType="String" resultMap="selectResult">
+        SELECT
+            a.id,
+            a.coach_id,
+            b.name coach_name,
+            a.user_type,
+            a.name,
+            a.gender,
+            a.birthdate,
+            a.email,
+            a.phone,
+            a.summary
+        FROM user a
+            LEFT JOIN user b ON a.coach_id = b.id
+        WHERE a.email = #{email}
+    </select>
+
+    <select id="selectByUserType" resultMap="selectResult">
+        SELECT
+            id,
+            coach_id,
+            user_type,
+            name,
+            gender,
+            birthdate,
+            email,
+            phone,
+            summary
+        FROM user
+        WHERE user_type = #{userType}
+    </select>
+
+</mapper>

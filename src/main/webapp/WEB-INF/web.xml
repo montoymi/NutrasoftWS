@@ -1,0 +1,35 @@
+<?xml version = '1.0' encoding = 'windows-1252'?>
+<web-app>
+
+    <display-name>Archetype Created Web Application</display-name>
+
+    <servlet>
+        <servlet-name>jersey-serlvet</servlet-name>
+        <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+
+        <init-param>
+            <param-name>jersey.config.server.provider.packages</param-name>
+            <param-value>com.amadeus.nutrasoft.rest;com.amadeus.nutrasoft.exception</param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>jersey.config.server.provider.classnames</param-name>
+            <param-value>org.glassfish.jersey.media.multipart.MultiPartFeature</param-value>
+        </init-param>
+
+        <!-- NOTA: Solo para desarrollo -->
+        <!-- How to add CORS support on the server side in Java with Jersey -->
+        <init-param>
+            <param-name>javax.ws.rs.Application</param-name>
+            <param-value>com.amadeus.nutrasoft.MyResourceConfig</param-value>
+        </init-param>
+
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>jersey-serlvet</servlet-name>
+        <url-pattern>/*</url-pattern>
+    </servlet-mapping>
+
+</web-app>

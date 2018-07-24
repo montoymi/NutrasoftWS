@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="PlanDay">
+
+    <insert id="insert" parameterType="PlanDay" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO plan_day (
+            plan_id,
+            day,
+            energ_expend_kcal,
+            energ_intake_kcal,
+            macros_ratio_type,
+            pro_energ_pct,
+            cho_energ_pct,
+            fat_energ_pct,
+            pro_g,
+            cho_g,
+            fat_g,
+            pro_bodywt_g)
+        VALUES (
+            #{plan.id},
+            #{day},
+            #{energExpend},
+            #{energIntake},
+            #{macrosRatioType},
+            #{proEnergPct},
+            #{choEnergPct},
+            #{fatEnergPct},
+            #{pro},
+            #{cho},
+            #{fat},
+            #{proBodywt})
+    </insert>
+
+    <update id="update" parameterType="PlanDay">
+        UPDATE plan_day
+        SET
+            plan_id           = #{plan.id},
+            day               = #{day},
+            energ_expend_kcal = #{energExpend},
+            energ_intake_kcal = #{energIntake},
+            macros_ratio_type = #{macrosRatioType},
+            pro_energ_pct     = #{proEnergPct},
+            cho_energ_pct     = #{choEnergPct},
+            fat_energ_pct     = #{fatEnergPct},
+            pro_g             = #{pro},
+            cho_g             = #{cho},
+            fat_g             = #{fat},
+            pro_bodywt_g      = #{proBodywt}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteAll" parameterType="int">
+        DELETE FROM plan_day
+        WHERE plan_id = #{planId}
+    </delete>
+
+</mapper>

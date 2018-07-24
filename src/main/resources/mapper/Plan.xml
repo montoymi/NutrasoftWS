@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Plan">
+
+    <resultMap id="selectResult" type="Plan">
+        <result property="id" column="id"/>
+        <result property="goal.id" column="goal_id"/>
+        <result property="beginDate" column="begin_date"/>
+        <result property="endDate" column="end_date"/>
+        <result property="height" column="height_m"/>
+        <result property="neck" column="neck_cm"/>
+        <result property="waist" column="waist_cm"/>
+        <result property="hip" column="hip_cm"/>
+        <result property="weight" column="weight_kg"/>
+        <result property="hrMax" column="hr_max"/>
+        <result property="energBasal" column="energ_basal_kcal"/>
+        <result property="energVariationPct" column="energ_variation_pct"/>
+        <result property="biotype" column="biotype"/>
+        <result property="energVariationPct" column="energ_variation_pct"/>
+        <result property="client.id" column="client_id"/>
+        <result property="client.coach.id" column="coach_id"/>
+        <result property="client.name" column="name"/>
+        <result property="client.gender" column="gender"/>
+        <result property="client.birthdate" column="birthdate"/>
+        <result property="goal.name" column="goal_name"/>
+        <collection property="planDayList" ofType="PlanDay">
+            <id property="id" column="plan_day_id"/>
+            <result property="day" column="day"/>
+            <result property="energIntake" column="energ_intake_kcal"/>
+            <result property="proEnergPct" column="pro_energ_pct"/>
+            <result property="choEnergPct" column="cho_energ_pct"/>
+            <result property="fatEnergPct" column="fat_energ_pct"/>
+            <result property="pro" column="pro_g"/>
+            <result property="cho" column="cho_g"/>
+            <result property="fat" column="fat_g"/>
+            <result property="macrosRatioType" column="macros_ratio_type"/>
+            <collection property="planDayActivityList" ofType="PlanDayActivity">
+                <id property="id" column="plan_day_activity_id"/>
+                <result property="activity.id" column="activity_id"/>
+                <result property="activity.name" column="activity_name"/>
+                <result property="activity.malePar" column="male_par"/>
+                <result property="activity.femalePar" column="female_par"/>
+                <result property="time" column="time_h"/>
+            </collection>
+        </collection>
+    </resultMap>
+
+    <!-- Segundo resultMap que permite agrupar planes por cliente -->
+    <resultMap id="selectResult2" type="User">
+        <result property="name" column="user_name"/>
+        <collection property="planList" ofType="Plan">
+            <id property="id" column="id"/>
+            <result property="goal.name" column="goal_name"/>
+            <result property="beginDate" column="begin_date"/>
+            <result property="endDate" column="end_date"/>
+            <result property="status" column="status"/>
+        </collection>
+    </resultMap>
+
+    <insert id="insert" parameterType="Plan" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO plan (
+            client_id,
+            goal_id,
+            begin_date,
+            end_date,
+            height_m,
+            neck_cm,
+            waist_cm,
+            hip_cm,
+            weight_kg,
+            hr_max,
+            energ_basal_kcal,
+            energ_variation_pct,
+            biotype)
+        VALUES (
+            #{client.id},
+            #{goal.id},
+            #{beginDate},
+            #{endDate},
+            #{height},
+            #{neck},
+            #{waist},
+            #{hip},
+            #{weight},
+            #{hrMax},
+            #{energBasal},
+            #{energVariationPct},
+            #{biotype})
+    </insert>
+
+    <update id="update" parameterType="Plan">
+        UPDATE plan
+        SET
+            client_id           = #{client.id},
+            goal_id             = #{goal.id},
+            begin_date          = #{beginDate},
+            end_date            = #{endDate},
+            height_m            = #{height},
+            neck_cm             = #{neck},
+            waist_cm            = #{waist},
+            hip_cm              = #{hip},
+            weight_kg           = #{weight},
+            hr_max              = #{hrMax},
+            energ_basal_kcal    = #{energBasal},
+            energ_variation_pct = #{energVariationPct},
+            biotype             = #{biotype}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="int">
+        DELETE FROM plan
+        WHERE id = #{id}
+    </delete>
+
+
+    <select id="selectById" parameterType="map" resultMap="selectResult">
+        SELECT
+            p.id,
+            p.client_id,
+            p.goal_id,
+            p.begin_date,
+            p.end_date,
+            p.height_m,
+            p.neck_cm,
+            p.waist_cm,
+            p.hip_cm,
+            p.weight_kg,
+            p.hr_max,
+            p.energ_basal_kcal,
+            p.energ_variation_pct,
+            p.biotype,
+            p.energ_variation_pct,
+            u.coach_id,
+            u.name,
+            u.gender,
+            u.birthdate,
+            gl.name  goal_name,
+            pd.id    plan_day_id,
+            pd.day,
+            pd.energ_intake_kcal,
+            pd.pro_energ_pct,
+            pd.cho_energ_pct,
+            pd.fat_energ_pct,
+            pd.pro_g,
+            pd.cho_g,
+            pd.fat_g,
+            pd.macros_ratio_type,
+            pda.id   plan_day_activity_id,
+            al.name  activity_name,
+            pda.time_h,
+            a.id     activity_id,
+            a.male_par,
+            a.female_par
+        FROM plan p, user u, goal g, goal_lang gl, plan_day pd, plan_day_activity pda,
+            activity a, activity_lang al
+        WHERE p.client_id = u.id
+              AND p.goal_id = g.id
+              AND g.id = gl.goal_id
+              AND p.id = pd.plan_id
+              AND pd.id = pda.plan_day_id
+              AND pda.activity_id = a.id
+              AND a.id = al.activity_id
+              AND gl.lang = #{lang}
+              AND al.lang = #{lang}
+              AND p.id = #{id}
+    </select>
+
+    <select id="selectByClientId" parameterType="int" resultMap="selectResult">
+        SELECT
+            p.id,
+            p.client_id,
+            p.begin_date,
+            p.end_date
+        FROM plan p
+        WHERE p.client_id = #{clientId}
+        ORDER BY id DESC
+        LIMIT 1
+    </select>
+
+    <select id="selectByCoachId" parameterType="Map" resultMap="selectResult2">
+        SELECT
+            p.id,
+            p.begin_date,
+            p.end_date,
+            u.name                 user_name,
+            gl.name                goal_name,
+            CASE WHEN curdate() > p.end_date
+                THEN 'done'
+            WHEN curdate() BETWEEN p.begin_date AND p.end_date
+                THEN 'in_progress'
+            ELSE 'not_started' END status
+        FROM plan p, user u, goal g, goal_lang gl
+        WHERE p.client_id = u.id
+              AND p.goal_id = g.id
+              AND g.id = gl.goal_id
+              AND gl.lang = #{lang}
+              AND u.coach_id = #{coachId}
+        ORDER BY p.end_date DESC
+    </select>
+
+</mapper>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="MenuMeal">
+
+    <insert id="insert" parameterType="MenuMeal" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO menu_meal (
+            menu_id,
+            meal_id,
+            dish_id)
+        VALUES (
+            #{menu.id},
+            #{meal.id},
+            #{dish.id})
+    </insert>
+
+    <update id="update" parameterType="MenuMeal">
+        UPDATE menu_meal
+        SET
+            menu_id = #{menu.id},
+            meal_id = #{meal.id},
+            dish_id = #{dish.id}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteAll" parameterType="int">
+        DELETE FROM menu_meal
+        WHERE menu_id = #{menuId}
+    </delete>
+
+</mapper>

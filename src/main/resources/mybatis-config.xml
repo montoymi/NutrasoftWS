@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+
+    <typeAliases>
+        <typeAlias alias="Activity" type="com.amadeus.nutrasoft.model.Activity"/>
+        <typeAlias alias="DietType" type="com.amadeus.nutrasoft.model.DietType"/>
+        <typeAlias alias="Dish" type="com.amadeus.nutrasoft.model.Dish"/>
+        <typeAlias alias="DishPart" type="com.amadeus.nutrasoft.model.DishPart"/>
+        <typeAlias alias="DishPartFood" type="com.amadeus.nutrasoft.model.DishPartFood"/>
+        <typeAlias alias="ExcludedFood" type="com.amadeus.nutrasoft.model.ExcludedFood"/>
+        <typeAlias alias="ExerciseZone" type="com.amadeus.nutrasoft.model.ExerciseZone"/>
+        <typeAlias alias="Food" type="com.amadeus.nutrasoft.model.Food"/>
+        <typeAlias alias="FoodGroup" type="com.amadeus.nutrasoft.model.FoodGroup"/>
+        <typeAlias alias="FoodNutrient" type="com.amadeus.nutrasoft.model.FoodNutrient"/>
+        <typeAlias alias="Item" type="com.amadeus.nutrasoft.model.Item"/>
+        <typeAlias alias="NutrientRatio" type="com.amadeus.nutrasoft.model.NutrientRatio"/>
+        <typeAlias alias="Meal" type="com.amadeus.nutrasoft.model.Meal"/>
+        <typeAlias alias="Menu" type="com.amadeus.nutrasoft.model.Menu"/>
+        <typeAlias alias="MenuMeal" type="com.amadeus.nutrasoft.model.MenuMeal"/>
+        <typeAlias alias="Plan" type="com.amadeus.nutrasoft.model.Plan"/>
+        <typeAlias alias="PlanDay" type="com.amadeus.nutrasoft.model.PlanDay"/>
+        <typeAlias alias="PlanDayActivity" type="com.amadeus.nutrasoft.model.PlanDayActivity"/>
+        <typeAlias alias="Preference" type="com.amadeus.nutrasoft.model.Preference"/>
+        <typeAlias alias="User" type="com.amadeus.nutrasoft.model.User"/>
+        <typeAlias alias="Weight" type="com.amadeus.nutrasoft.model.Weight"/>
+    </typeAliases>
+
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <!--  connecting to Local MySql -->
+            <dataSource type="POOLED">
+                <property name="driver" value="com.mysql.jdbc.Driver"/>
+                <property name="url" value="jdbc:mysql://localhost:3306/nutrasoft"/>
+                <property name="username" value="root"/>
+                <property name="password" value="root1"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+    <mappers>
+        <mapper resource="mapper/Activity.xml"/>
+        <mapper resource="mapper/Diet.xml"/>
+        <mapper resource="mapper/DietType.xml"/>
+        <mapper resource="mapper/Dish.xml"/>
+        <mapper resource="mapper/DishPart.xml"/>
+        <mapper resource="mapper/DishPartFood.xml"/>
+        <mapper resource="mapper/ExcludedFood.xml"/>
+        <mapper resource="mapper/ExerciseZone.xml"/>
+        <mapper resource="mapper/Food.xml"/>
+        <mapper resource="mapper/Item.xml"/>
+        <mapper resource="mapper/Meal.xml"/>
+        <mapper resource="mapper/Menu.xml"/>
+        <mapper resource="mapper/MenuMeal.xml"/>
+        <mapper resource="mapper/NutrientRatio.xml"/>
+        <mapper resource="mapper/Plan.xml"/>
+        <mapper resource="mapper/PlanDay.xml"/>
+        <mapper resource="mapper/PlanDayActivity.xml"/>
+        <mapper resource="mapper/Preference.xml"/>
+        <mapper resource="mapper/User.xml"/>
+        <mapper resource="mapper/Weight.xml"/>
+    </mappers>
+
+</configuration>
