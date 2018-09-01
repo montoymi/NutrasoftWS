@@ -14,9 +14,13 @@ public class User {
     private String phone;
     private byte[] photo;
     private String summary;
+    private String preferredLang;
+    private byte status;
     private List<Plan> planList;
 
     private String photoName;
+    private Short hrMax;
+    private Byte donePct;
 
     public Integer getId() {
         return id;
@@ -98,6 +102,22 @@ public class User {
         this.summary = summary;
     }
 
+    public String getPreferredLang() {
+        return preferredLang;
+    }
+
+    public void setPreferredLang(String preferredLang) {
+        this.preferredLang = preferredLang;
+    }
+
+    public byte getStatus() {
+        return status;
+    }
+
+    public void setStatus(byte status) {
+        this.status = status;
+    }
+
     public List<Plan> getPlanList() {
         return planList;
     }
@@ -112,5 +132,21 @@ public class User {
 
     public void setPhotoName(String photoName) {
         this.photoName = photoName;
+    }
+
+    public Short getHrMax() {
+        return hrMax;
+    }
+
+    public void setHrMax(Short hrMax) {
+        this.hrMax = hrMax;
+    }
+
+    public Byte getDonePct() {
+        return donePct;
+    }
+
+    public void setDonePct(Byte donePct) {
+        this.donePct = donePct;
     }
 }

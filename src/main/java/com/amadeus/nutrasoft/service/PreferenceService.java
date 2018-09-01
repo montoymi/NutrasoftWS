@@ -1,10 +1,10 @@
 package com.amadeus.nutrasoft.service;
 
+import com.amadeus.nutrasoft.config.MyBatisSqlSession;
 import com.amadeus.nutrasoft.dao.ExcludedFoodDAO;
 import com.amadeus.nutrasoft.dao.PreferenceDAO;
 import com.amadeus.nutrasoft.model.ExcludedFood;
 import com.amadeus.nutrasoft.model.Preference;
-import com.amadeus.nutrasoft.mybatis.MyBatisSqlSession;
 
 public class PreferenceService {
     private PreferenceDAO preferenceDAO = new PreferenceDAO(MyBatisSqlSession.getSqlSessionFactory());

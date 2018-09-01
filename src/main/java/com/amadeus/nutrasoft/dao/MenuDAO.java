@@ -49,7 +49,7 @@ public class MenuDAO {
         }
     }
 
-    public Menu getLastMenu(int coachId, int dietTypeId) {
+    public Menu getLastMenuByCoachId(int coachId, int dietTypeId) {
         SqlSession session = sqlSessionFactory.openSession();
 
         Map<String, Object> map = new HashMap<>();
@@ -57,7 +57,7 @@ public class MenuDAO {
         map.put("dietTypeId", dietTypeId);
 
         try {
-            return session.selectOne("Menu.selectLast", map);
+            return session.selectOne("Menu.selectLastByCoachId", map);
         } finally {
             session.close();
         }
@@ -78,6 +78,13 @@ public class MenuDAO {
         }
     }
 
+    /**
+     * Rertorna una lista de dietType donde cada uno tiene su lista de menus.
+     *
+     * @param coachId
+     * @param lang
+     * @return
+     */
     public List<DietType> getDietTypesByCoachId(int coachId, String lang) {
         SqlSession session = sqlSessionFactory.openSession();
 
@@ -87,6 +94,20 @@ public class MenuDAO {
 
         try {
             return session.selectList("Menu.selectByCoachId", map);
+        } finally {
+            session.close();
+        }
+    }
+
+    public List<Menu> getMenusByCoachIdAndDietTypeId(int coachId, int dietTypeId) {
+        SqlSession session = sqlSessionFactory.openSession();
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("coachId", coachId);
+        map.put("dietTypeId", dietTypeId);
+
+        try {
+            return session.selectList("Menu.selectByCoachIdAndDietTypeId", map);
         } finally {
             session.close();
         }

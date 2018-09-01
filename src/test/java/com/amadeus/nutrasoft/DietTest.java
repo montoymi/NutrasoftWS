@@ -31,13 +31,13 @@ public class DietTest extends JerseyTest {
         return UriBuilder.fromUri("http://localhost:8080").path("nutrasoft-ws").build();
     }
 
-    @Test
+    ////@Test
     public void generateDiet() {
         int clientId = 2;
         byte day = 1;
         DietService dietService = new DietService();
 
-        Menu menu = dietService.generateDiet(clientId, (byte) 1, (byte) day, "es");
+        Menu menu = dietService.generateDiet(clientId, day);
         PlanDay planDay = menu.getPlanDay();
 
         // Requerimiento de nutrientes que debe ser cubierto en la comida.
@@ -66,7 +66,7 @@ public class DietTest extends JerseyTest {
                 Food food = dishPartFood.getFood();
 
                 // Aporte de cada alimento.
-                String foodName = "Food: " + food.getNdbNo() + " - " + food.getName();
+                String foodName = "Food: " + food.getNdbno() + " - " + food.getName();
                 String weight = "Weight: " + format2(dishPartFood.getWeight()) + " g - WeightPct: " + format2(dishPartFood.getWeightPct()) + "%";
                 String nutrients2 = "Pro: " + format(dishPartFood.getPro()) + " Cho: " + format(dishPartFood.getCho()) + " Fat: " + format(
                         dishPartFood.getFat());

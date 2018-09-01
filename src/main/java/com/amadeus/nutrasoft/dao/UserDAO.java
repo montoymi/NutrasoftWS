@@ -4,7 +4,11 @@ import com.amadeus.nutrasoft.model.User;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static com.amadeus.nutrasoft.constants.Constants.*;
 
 public class UserDAO {
     private SqlSessionFactory sqlSessionFactory;
@@ -55,11 +59,35 @@ public class UserDAO {
         }
     }
 
-    public List<User> getUsersByUserType(String userType) {
+    /**
+     * Retorna los coaches aprobados.
+     */
+    public List<User> getAllCoaches() {
         SqlSession session = sqlSessionFactory.openSession();
 
+        Map<String, Object> map = new HashMap<>();
+        map.put("userType", USER_TYPE_COACH);
+        map.put("status", USER_STATUS_APPROVED);
+
         try {
-            return session.selectList("User.selectByUserType", userType);
+            return session.selectList("User.selectByUserType", map);
+        } finally {
+            session.close();
+        }
+    }
+
+    /**
+     * Retorna los alumnos activos de un coach.
+     */
+    public List<User> getClientsByCoachId(int coachId) {
+        SqlSession session = sqlSessionFactory.openSession();
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("coachId", coachId);
+        map.put("status", USER_STATUS_ACTIVE);
+
+        try {
+            return session.selectList("User.selectByCoachId", map);
         } finally {
             session.close();
         }

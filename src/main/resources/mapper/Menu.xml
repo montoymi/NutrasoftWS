@@ -5,7 +5,7 @@
 
 <mapper namespace="Menu">
 
-    <resultMap id="selectResult" type="Menu">
+    <resultMap id="resultMap" type="Menu">
         <id property="id" column="id"/>
         <result property="coach.id" column="coach_id"/>
         <result property="dietType.id" column="diet_type_id"/>
@@ -22,7 +22,7 @@
     </resultMap>
 
     <!-- Segundo resultMap que permite agrupar menus por tipo de dieta -->
-    <resultMap id="selectResult2" type="DietType">
+    <resultMap id="resultMap2" type="DietType">
         <result property="name" column="diet_type_name"/>
         <collection property="menuList" ofType="Menu">
             <id property="id" column="id"/>
@@ -60,7 +60,7 @@
         WHERE id = #{id}
     </delete>
 
-    <select id="selectLast" parameterType="map" resultMap="selectResult">
+    <select id="selectLastByCoachId" parameterType="map" resultMap="resultMap">
         SELECT
             m.id,
             m.coach_id,
@@ -73,7 +73,7 @@
         LIMIT 1
     </select>
 
-    <select id="selectById" parameterType="map" resultMap="selectResult">
+    <select id="selectById" parameterType="map" resultMap="resultMap">
         SELECT
             m.id,
             m.coach_id,
@@ -98,7 +98,7 @@
               AND m.id = #{id}
     </select>
 
-    <select id="selectByCoachId" parameterType="map" resultMap="selectResult2">
+    <select id="selectByCoachId" parameterType="map" resultMap="resultMap2">
         SELECT
             m.id,
             m.coach_id,
@@ -110,6 +110,19 @@
               AND dt.id = dtl.diet_type_id
               AND dtl.lang = #{lang}
               AND m.coach_id = #{coachId}
+    </select>
+
+    <!-- Obtiene una lista de menus para elegir cual retornar según el día seleccionado
+         por el usuario en la página home -->
+    <select id="selectByCoachIdAndDietTypeId" parameterType="map" resultMap="resultMap">
+        SELECT
+            m.id,
+            m.coach_id,
+            m.diet_type_id,
+            m.week,
+            m.day
+        FROM menu m
+        WHERE m.coach_id = #{coachId} AND m.diet_type_id = #{dietTypeId}
     </select>
 
 </mapper>

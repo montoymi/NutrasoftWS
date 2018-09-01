@@ -9,15 +9,16 @@ import javax.ws.rs.core.Response;
 
 import static javax.ws.rs.core.Response.Status.OK;
 
-@Path("/measurements")
+@Path("/")
 @Consumes({MediaType.APPLICATION_JSON})
 @Produces({MediaType.APPLICATION_JSON})
 public class MeasurementResource {
     private MeasurementService measurementService = new MeasurementService();
 
     @GET
-    public Response calculateMeasurement(@QueryParam("clientId") int clientId) {
-        Measurement measurement = measurementService.calculateMeasurement(clientId);
+    @Path("clients/{id}/measurements/last")
+    public Response getMeasurementByClientId(@PathParam("id") int clientId) {
+        Measurement measurement = measurementService.getMeasurementByClientId(clientId);
         return Response.status(OK).entity(measurement).build();
     }
 }

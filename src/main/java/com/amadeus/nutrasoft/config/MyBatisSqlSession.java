@@ -1,4 +1,4 @@
-package com.amadeus.nutrasoft.mybatis;
+package com.amadeus.nutrasoft.config;
 
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSessionFactory;

@@ -5,14 +5,14 @@
 
 <mapper namespace="Preference">
 
-    <resultMap id="selectResult" type="Preference">
+    <resultMap id="resultMap" type="Preference">
         <result property="user.id" column="user_id"/>
         <result property="dietType.id" column="diet_type_id"/>
         <result property="dietType.name" column="diet_type_name"/>
         <result property="mealCount" column="meal_count"/>
         <collection property="excludedFoodList" ofType="ExcludedFood">
             <id property="id" column="excluded_food_id"/>
-            <result property="food.ndbNo" column="food_ndbno"/>
+            <result property="food.ndbno" column="food_ndbno"/>
             <result property="food.name" column="food_name"/>
         </collection>
     </resultMap>
@@ -36,7 +36,7 @@
         WHERE user_id = #{user.id}
     </update>
 
-    <select id="selectById" parameterType="map" resultMap="selectResult">
+    <select id="selectById" parameterType="map" resultMap="resultMap">
         SELECT
             p.user_id,
             p.diet_type_id,

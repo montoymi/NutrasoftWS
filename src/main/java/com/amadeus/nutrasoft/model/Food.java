@@ -3,18 +3,18 @@ package com.amadeus.nutrasoft.model;
 import java.util.List;
 
 public class Food {
-    private String ndbNo;
+    private String ndbno;
     private FoodGroup foodGroup;
     private String name;
     private Float cost;
     private List<FoodNutrient> foodNutrientList;
 
-    public String getNdbNo() {
-        return ndbNo;
+    public String getNdbno() {
+        return ndbno;
     }
 
-    public void setNdbNo(String ndbNo) {
-        this.ndbNo = ndbNo;
+    public void setNdbno(String ndbno) {
+        this.ndbno = ndbno;
     }
 
     public FoodGroup getFoodGroup() {

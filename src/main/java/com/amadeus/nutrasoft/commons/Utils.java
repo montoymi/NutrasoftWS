@@ -69,6 +69,14 @@ public class Utils {
         return BigDecimal.valueOf(value).setScale(scale, RoundingMode.HALF_UP).floatValue();
     }
 
+    /*
+     * Redondea a las centenas.
+     * Retorna números como 1600 ó 2200, en lugar de 1586 ó 2248.
+     */
+    private static double roundToHundred(double d) {
+        return round(d / 100, 0) * 100;
+    }
+
     /**
      * Retorna un double con redondeo HALF_UP.
      * Precision is the number of digits in a number. Scale is the number of digits to the right of the decimal point in a number. For example, the

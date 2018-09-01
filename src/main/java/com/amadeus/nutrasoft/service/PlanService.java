@@ -1,16 +1,18 @@
 package com.amadeus.nutrasoft.service;
 
 import com.amadeus.nutrasoft.calc.Calc;
+import com.amadeus.nutrasoft.config.MyBatisSqlSession;
 import com.amadeus.nutrasoft.dao.*;
+import com.amadeus.nutrasoft.exception.ApplicationException;
 import com.amadeus.nutrasoft.model.*;
-import com.amadeus.nutrasoft.mybatis.MyBatisSqlSession;
 
-import java.util.Calendar;
 import java.util.List;
 
 import static com.amadeus.nutrasoft.calc.Macronutrient.*;
 import static com.amadeus.nutrasoft.commons.Utils.*;
-import static com.amadeus.nutrasoft.constants.Constants.*;
+import static com.amadeus.nutrasoft.constants.Constants.GENDER_MALE;
+import static com.amadeus.nutrasoft.constants.Constants.MACROS_RATIO_TYPE_DEFAULT;
+import static com.amadeus.nutrasoft.exception.ApplicationException.PLAN_CAN_NOT_DELETE;
 
 public class PlanService {
     private PlanDAO planDAO = new PlanDAO(MyBatisSqlSession.getSqlSessionFactory());
@@ -20,22 +22,28 @@ public class PlanService {
     private NutrientRatioDAO nutrientRatioDAO = new NutrientRatioDAO(MyBatisSqlSession.getSqlSessionFactory());
     private ItemDAO itemDAO = new ItemDAO(MyBatisSqlSession.getSqlSessionFactory());
     private ActivityDAO activityDAO = new ActivityDAO(MyBatisSqlSession.getSqlSessionFactory());
+    private ComplianceDAO complianceDAO = new ComplianceDAO(MyBatisSqlSession.getSqlSessionFactory());
+    private NotificationTempDAO notificationTempDAO = new NotificationTempDAO(MyBatisSqlSession.getSqlSessionFactory());
+
+    private static void avgNutrientRatio(NutrientRatio nutrientRatio) {
+        nutrientRatio.setProEnergPct(avg(nutrientRatio.getProEnergPctMin(), nutrientRatio.getProEnergPctMax()));
+        nutrientRatio.setChoEnergPct(avg(nutrientRatio.getChoEnergPctMin(), nutrientRatio.getChoEnergPctMax()));
+        nutrientRatio.setFatEnergPct((byte) (100 - (nutrientRatio.getProEnergPct() + nutrientRatio.getChoEnergPct())));
+    }
 
     public void calculatePlan(Plan plan) {
         User client = plan.getClient();
 
         List<ExerciseZone> exerciseZoneList = exerciseZoneDAO.getAllExerciseZones();
 
-        // Calcula la edad.
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(client.getBirthdate());
-        final float age = CURRENT_YEAR - calendar.get(Calendar.YEAR);
-
         /*
          * Calcula de ratio metabólico basal.
          */
 
-        final byte bfp = Calc.bfp(client.getGender(), plan.getHeight(), plan.getNeck(), plan.getWaist(), plan.getHip());
+        // Previene cannot unbox null value.
+        float hip = plan.getHip() != null ? plan.getHip() : 0;
+
+        final byte bfp = Calc.bfp(client.getGender(), plan.getHeight(), plan.getNeck(), plan.getWaist(), hip);
         final float ffm = Calc.ffm(bfp, plan.getWeight());
         final short bmr = Calc.bmr(ffm);
         plan.setEnergBasal(bmr);
@@ -81,6 +89,7 @@ public class PlanService {
 
                         float par = getPar(client.getGender(), activity);
                         pal += planDayActivity.getTime() * par;
+
                         break;
                 }
             }
@@ -94,7 +103,7 @@ public class PlanService {
             final short noWorkoutEe = Calc.tee(bmr, pal);
 
             // Gasto energético del entrenamiento.
-            final short workoutEe = Calc.ee(client.getGender(), hr, plan.getWeight(), age, workoutTime);
+            final short workoutEe = Calc.ee(client.getGender(), hr, plan.getWeight(), Calc.age(client.getBirthdate()), workoutTime);
 
             // Gasto energético total del día.
             final short energExpend = (short) (noWorkoutEe + workoutEe);
@@ -130,9 +139,10 @@ public class PlanService {
 
                 nutrientRatio = nutrientRatioDAO.getNutrientRatioByParams(nutrientRatio);
 
-                proEnergPct = avg(nutrientRatio.getProEnergPctMin(), nutrientRatio.getProEnergPctMax());
-                choEnergPct = avg(nutrientRatio.getChoEnergPctMin(), nutrientRatio.getChoEnergPctMax());
-                fatEnergPct = (byte) (100 - (proEnergPct + choEnergPct));
+                avgNutrientRatio(nutrientRatio);
+                proEnergPct = nutrientRatio.getProEnergPct();
+                choEnergPct = nutrientRatio.getChoEnergPct();
+                fatEnergPct = nutrientRatio.getFatEnergPct();
 
                 planDay.setProEnergPct(proEnergPct);
                 planDay.setChoEnergPct(choEnergPct);
@@ -183,6 +193,8 @@ public class PlanService {
                 planDayActivityDAO.createPlanDayActivity(planDayActivity);
             }
         }
+
+        createNotificationToClient(plan.getClient());
     }
 
     public void updatePlan(Plan plan) {
@@ -206,6 +218,12 @@ public class PlanService {
     }
 
     public void deletePlan(int id) {
+        // Valida que el plan no tenga registros de cumplimiento creados.
+        int count = complianceDAO.getCountByPlanId(id);
+        if (count > 0) {
+            throw new ApplicationException(PLAN_CAN_NOT_DELETE);
+        }
+
         planDayActivityDAO.deleteAllPlanDayActivities(id);
         planDayDAO.deleteAllPlanDays(id);
         planDAO.deletePlan(id);
@@ -214,6 +232,15 @@ public class PlanService {
     public Plan getPlanById(int id, String lang) {
         Plan plan = planDAO.getPlanById(id, lang);
         calculatePlan(plan);
+        return plan;
+    }
+
+    public Plan getPlanByClientId(int clientId, String lang) {
+        Plan plan = planDAO.getPlanByClientId(clientId, lang);
+        if (plan != null) {
+            calculatePlan(plan);
+        }
+
         return plan;
     }
 
@@ -227,6 +254,10 @@ public class PlanService {
 
     public List<Activity> getAllActivities(String lang) {
         return activityDAO.getAllActivities(lang);
+    }
+
+    public List<Activity> getDefaultActivities(String lang) {
+        return activityDAO.getDefaultActivities(lang);
     }
 
     private ExerciseZone getExerciseZone(List<ExerciseZone> exerciseZoneList, Activity activity) {
@@ -263,5 +294,19 @@ public class PlanService {
      */
     private void validateUpdatePlan(Plan plan) {
         // ApplicationException
+    }
+
+    private void createNotificationToClient(User client) {
+        // Obtiene la plantilla de notificación del nuevo plan nutricional.
+        Notification notification = notificationTempDAO.getNotificationTempById(2, client.getPreferredLang());
+        notification.setNotificationTempId(notification.getId());
+        notification.setUser(client);
+        // Crea el mensaje personalizado.
+        // Hola %s, tienes un nuevo plan nutricional.
+        String body = String.format(notification.getBody(), client.getName());
+        notification.setBody(body);
+
+        NotificationService notificationService = new NotificationService();
+        notificationService.createNotification(notification);
     }
 }

@@ -6,7 +6,7 @@
 <mapper namespace="Weight">
 
     <resultMap id="selectByNdbnoResult" type="Weight">
-        <result property="food.ndbNo" column="ndb_no"/>
+        <result property="food.ndbno" column="ndb_no"/>
         <result property="seq" column="seq"/>
         <result property="amount" column="amount"/>
         <result property="measure" column="name"/>

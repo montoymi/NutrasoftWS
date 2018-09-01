@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Compliance">
+
+    <resultMap id="resultMap" type="Compliance">
+        <id property="id" column="id"/>
+        <result property="plan.id" column="plan_id"/>
+        <result property="dietDate" column="diet_date"/>
+        <collection property="complianceMealList" ofType="ComplianceMeal">
+            <id property="id" column="compliance_meal_id"/>
+            <result property="done" column="done"/>
+            <result property="meal.id" column="meal_id"/>
+            <result property="meal.name" column="name"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="resultMap2" type="Plan">
+        <id property="id" column="id"/>
+        <result property="goal.id" column="goal_id"/>
+        <result property="goal.name" column="goal_name"/>
+        <result property="goal.description" column="goal_description"/>
+        <result property="beginDate" column="begin_date"/>
+        <result property="endDate" column="end_date"/>
+        <result property="client.id" column="client_id"/>
+        <collection property="complianceList" ofType="Compliance">
+            <id property="id" column="compliance_id"/>
+            <result property="dietDate" column="diet_date"/>
+            <result property="donePct" column="done_pct"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="resultMap3" type="User">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="donePct" column="done_pct"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="Compliance" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO compliance (
+            plan_id,
+            diet_date)
+        VALUES (
+            #{plan.id},
+            #{dietDate})
+    </insert>
+
+    <update id="update" parameterType="Compliance">
+        UPDATE compliance
+        SET
+            plan_id   = #{plan.id},
+            diet_date = #{dietDate}
+        WHERE id = #{id}
+    </update>
+
+    <select id="selectById" parameterType="map" resultMap="resultMap">
+        SELECT
+            c.id,
+            c.plan_id,
+            c.diet_date,
+            cm.id compliance_meal_id,
+            cm.done,
+            m.id  meal_id,
+            ml.name
+        FROM compliance c, compliance_meal cm, meal m, meal_lang ml
+        WHERE c.id = cm.compliance_id
+              AND cm.meal_id = m.id
+              AND m.id = ml.meal_id
+              AND ml.lang = #{lang}
+              AND c.id = #{id}
+    </select>
+
+    <select id="selectByClientId" parameterType="int" resultMap="resultMap2">
+        SELECT
+            p.id,
+            p.client_id,
+            p.goal_id,
+            p.begin_date,
+            p.end_date,
+            gl.name            goal_name,
+            gl.description     goal_description,
+            c.id               compliance_id,
+            c.diet_date,
+            avg(cm.done) * 100 done_pct
+        FROM plan p
+            INNER JOIN goal g ON p.goal_id = g.id
+            INNER JOIN goal_lang gl ON g.id = gl.goal_id AND gl.lang = #{lang}
+            LEFT JOIN compliance c ON p.id = c.plan_id
+            LEFT JOIN compliance_meal cm ON c.id = cm.compliance_id
+        WHERE CURDATE() BETWEEN p.begin_date AND p.end_date
+              AND p.client_id = #{clientId}
+        GROUP BY
+            p.id,
+            p.client_id,
+            p.goal_id,
+            p.begin_date,
+            p.end_date,
+            gl.name,
+            gl.description,
+            c.id,
+            c.diet_date
+    </select>
+
+    <!--
+        Reporte de cumplimiento.
+        Retorna el porcentaje de cumplimiento de los planes vigentes
+        de los clientes de un coach dado.
+    -->
+    <select id="selectByCoachId" parameterType="int" resultMap="resultMap3">
+        SELECT
+            u.id,
+            u.name,
+            AVG(IFNULL(cm.done, 0)) * 100 done_pct
+        FROM
+            user u
+            INNER JOIN plan p ON u.id = p.client_id
+            LEFT JOIN compliance c ON p.id = c.plan_id
+            LEFT JOIN compliance_meal cm ON c.id = cm.compliance_id
+        WHERE CURDATE() BETWEEN p.begin_date AND p.end_date
+              AND p.client_id IN (
+            SELECT
+                id
+            FROM user
+            WHERE coach_id = #{coachId})
+        GROUP BY u.id
+    </select>
+
+    <!-- Para verificar si el cliente tiene registros de cumplimiento, antes de eliminar el plan -->
+    <select id="selectCount" parameterType="int" resultType="int">
+        SELECT
+            count(1)
+        FROM compliance c
+        WHERE c.plan_id = #{id}
+    </select>
+
+</mapper>

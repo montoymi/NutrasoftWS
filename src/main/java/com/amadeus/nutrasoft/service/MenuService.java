@@ -1,10 +1,10 @@
 package com.amadeus.nutrasoft.service;
 
+import com.amadeus.nutrasoft.config.MyBatisSqlSession;
 import com.amadeus.nutrasoft.dao.MealDAO;
 import com.amadeus.nutrasoft.dao.MenuDAO;
 import com.amadeus.nutrasoft.dao.MenuMealDAO;
 import com.amadeus.nutrasoft.model.*;
-import com.amadeus.nutrasoft.mybatis.MyBatisSqlSession;
 
 import java.util.List;
 
@@ -36,8 +36,8 @@ public class MenuService {
         menuDAO.deleteMenu(id);
     }
 
-    public Menu getNextMenu(int coachId, int dietTypeId) {
-        Menu menu = menuDAO.getLastMenu(coachId, dietTypeId);
+    public Menu getNextMenuByCoachId(int coachId, int dietTypeId) {
+        Menu menu = menuDAO.getLastMenuByCoachId(coachId, dietTypeId);
 
         if (menu == null) {
             menu = new Menu();

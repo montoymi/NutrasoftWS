@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ComplianceMeal">
+
+    <insert id="insert" parameterType="ComplianceMeal" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO compliance_meal (
+            compliance_id,
+            meal_id,
+            done)
+        VALUES (
+            #{compliance.id},
+            #{meal.id},
+            #{done})
+    </insert>
+
+    <update id="update" parameterType="ComplianceMeal">
+        UPDATE compliance_meal
+        SET
+            compliance_id = #{compliance.id},
+            meal_id       = #{meal.id},
+            done          = #{done}
+        WHERE id = #{id}
+    </update>
+
+</mapper>

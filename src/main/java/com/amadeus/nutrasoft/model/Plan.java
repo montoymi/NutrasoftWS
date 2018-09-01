@@ -20,6 +20,7 @@ public class Plan {
     private Byte choEnergPct;
     private String biotype;
     private List<PlanDay> planDayList;
+    private List<Compliance> complianceList;
 
     private String status;
 
@@ -157,5 +158,13 @@ public class Plan {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public List<Compliance> getComplianceList() {
+        return complianceList;
+    }
+
+    public void setComplianceList(List<Compliance> complianceList) {
+        this.complianceList = complianceList;
     }
 }

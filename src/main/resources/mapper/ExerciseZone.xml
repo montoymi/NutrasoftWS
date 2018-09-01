@@ -5,7 +5,7 @@
 
 <mapper namespace="ExerciseZone">
 
-    <resultMap id="selectResult" type="ExerciseZone">
+    <resultMap id="resultMap" type="ExerciseZone">
         <id property="activity.id" column="activity_id"/>
         <result property="code" column="code"/>
         <result property="hrMaxPctMin" column="hr_max_pct_min"/>
@@ -14,7 +14,7 @@
         <result property="proBodywt" column="pro_bodywt_g"/>
     </resultMap>
 
-    <select id="selectAll" parameterType="String" resultMap="selectResult">
+    <select id="selectAll" parameterType="String" resultMap="resultMap">
         SELECT
             activity_id,
             code,

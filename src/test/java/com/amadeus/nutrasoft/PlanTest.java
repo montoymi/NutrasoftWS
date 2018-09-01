@@ -17,6 +17,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import static com.amadeus.nutrasoft.constants.Constants.MACROS_RATIO_TYPE_DEFAULT;
+
 public class PlanTest extends JerseyTest {
     @Override
     protected Application configure() {
@@ -32,12 +34,26 @@ public class PlanTest extends JerseyTest {
         return UriBuilder.fromUri("http://localhost:8080").path("nutrasoft-ws").build();
     }
 
-    @Test
+    //@Test
     public void createPlan() {
         Plan plan = getPlan();
         PlanService planService = new PlanService();
         planService.createPlan(plan);
     }
+
+    //@Test
+    public void calculatePlan() {
+        Plan plan = getPlan();
+        PlanService planService = new PlanService();
+        planService.calculatePlan(plan);
+    }
+
+    //@Test
+    public void deletePlan() {
+        PlanService planService = new PlanService();
+        planService.deletePlan(1);
+    }
+
 
     private Plan getPlan() {
         List<PlanDay> planDayList = new ArrayList<>();
@@ -53,7 +69,7 @@ public class PlanTest extends JerseyTest {
         plan.setHeight(1.75F);
         plan.setNeck(40F);
         plan.setWaist(80F);
-        plan.setHip(90F);
+        plan.setHip(null);
         plan.setWeight(72F);
         plan.setHrMax((short) 178);
         plan.setChoEnergPct((byte) 60);
@@ -75,6 +91,7 @@ public class PlanTest extends JerseyTest {
 
         planDay = new PlanDay();
         planDay.setDay((byte) 1);
+        planDay.setMacrosRatioType(MACROS_RATIO_TYPE_DEFAULT);
         planDay.setChoEnergPct(plan.getChoEnergPct());
 
         // Dormir.

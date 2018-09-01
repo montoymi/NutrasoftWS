@@ -1,7 +1,11 @@
 package com.amadeus.nutrasoft.calc;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import static com.amadeus.nutrasoft.calc.Calc.Biotype.*;
 import static com.amadeus.nutrasoft.commons.Utils.*;
+import static com.amadeus.nutrasoft.constants.Constants.CURRENT_YEAR;
 import static com.amadeus.nutrasoft.constants.Constants.GENDER_MALE;
 import static java.lang.Math.log10;
 import static java.lang.Math.pow;
@@ -44,13 +48,19 @@ import static java.lang.Math.pow;
  *      con decimales. La conversion se hará antes de retornar el valor.
  */
 public class Calc {
-    // Se utiliza el BFP para calcular el nivel de grasa corporal y asì estimar el biotipo endomorfo.
+    // Se utiliza el BFP para calcular el nivel de grasa corporal y así estimar el biotipo endomorfo.
     private static final byte MALE_OBESITY_BFP = 25;
     private static final byte FEMALE_OBESITY_BFP = 32;
 
     // Se utiliza el FFMI para calcular el nivel de desarrollo muscular y así estimar el biotipo mesomorfo.
     private static final byte MALE_NOTABLE_MUSCULATURE_FFMI = 22;
     private static final byte FEMALE_NOTABLE_MUSCULATURE_FFMI = 17;
+
+    public static float age(Date birthdate) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(birthdate);
+        return CURRENT_YEAR - calendar.get(Calendar.YEAR);
+    }
 
     /*
      * Métodos para calcular la composición corporal.
@@ -252,6 +262,10 @@ public class Calc {
         return (short) round(tei, 0);
     }
 
+    public static float hrMax(float age) {
+        return 220 - age;
+    }
+
     /**
      * Formulas for determination of calorie burn if VO2max is unknown
      * <pre>
@@ -274,16 +288,6 @@ public class Calc {
         }
 
         return (short) round(ee, 0);
-    }
-
-    /*
-     * Redondea a las centenas.
-     *
-     * @param d
-     * @return Retorna números como 1600 ó 2200, en lugar de 1586 ó 2248.
-     */
-    private static double roundToHundred(double d) {
-        return round(d / 100, 0) * 100;
     }
 
     /*

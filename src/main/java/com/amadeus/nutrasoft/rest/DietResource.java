@@ -12,22 +12,22 @@ import java.util.List;
 
 import static javax.ws.rs.core.Response.Status.OK;
 
-@Path("/diets")
+@Path("/")
 @Consumes({MediaType.APPLICATION_JSON})
 @Produces({MediaType.APPLICATION_JSON})
 public class DietResource {
     private DietService dietService = new DietService();
 
     @GET
-    public Response generateDiet(@QueryParam("clientId") int clientId, @QueryParam("week") byte week, @QueryParam("day") byte day, @QueryParam("lang")
-            String lang) {
-        Menu menu = dietService.generateDiet(clientId, week, day, lang);
+    @Path("clients/{id}/diets/{day}")
+    public Response generateDiet(@PathParam("id") int clientId, @PathParam("day") byte day) {
+        Menu menu = dietService.generateDiet(clientId, day);
         return Response.status(OK).entity(menu).build();
     }
 
     @GET
-    @Path("/weights")
-    public Response getWeightsByNdbno(@QueryParam("ndbno") String ndbno, @QueryParam("weight") float weight, @QueryParam("lang") String lang) {
+    @Path("foods/{id}/weights")
+    public Response getWeightsByNdbno(@PathParam("id") String ndbno, @QueryParam("weight") float weight, @QueryParam("lang") String lang) {
         List<Weight> measureList = dietService.getWeightsByNdbno(ndbno, weight, lang);
         return Response.status(OK).entity(measureList).build();
     }

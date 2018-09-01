@@ -5,21 +5,34 @@
 
 <mapper namespace="Food">
 
-    <resultMap id="selectResult" type="FoodGroup">
+    <resultMap id="resultMap" type="FoodGroup">
         <id property="id" column="id"/>
         <result property="name" column="food_group_name"/>
         <collection property="foodList" ofType="Food">
-            <id property="ndbNo" column="ndbno"/>
-            <result property="name" column="food_name"/>
+            <id property="ndbno" column="ndbno"/>
+            <result property="name" column="name"/>
         </collection>
     </resultMap>
 
-    <select id="selectAll" parameterType="String" resultMap="selectResult">
+    <resultMap id="resultMap2" type="Food">
+        <id property="ndbno" column="ndbno"/>
+        <result property="name" column="name"/>
+        <result property="cost" column="cost"/>
+        <result property="foodGroup.foodClass" column="food_class"/>
+        <collection property="foodNutrientList" ofType="FoodNutrient">
+            <id property="food.ndbno" column="NDB_No"/>
+            <id property="nutrient.nutrNo" column="Nutr_No"/>
+            <result property="value" column="Nutr_Val"/>
+            <result property="nutrient.tagName" column="Tagname"/>
+        </collection>
+    </resultMap>
+
+    <select id="selectAll" parameterType="String" resultMap="resultMap">
         SELECT
             fg.id,
             fgl.name food_group_name,
             f.ndbno,
-            fl.name  food_name
+            fl.name
         FROM
             food_group fg,
             food_group_lang fgl,
@@ -32,6 +45,60 @@
             AND fgl.lang = #{lang}
             AND fl.lang = #{lang}
         ORDER BY fgl.name, fl.name
+    </select>
+
+    <select id="selectByNdbno" parameterType="map" resultMap="resultMap2">
+        SELECT
+            f.ndbno,
+            f.cost,
+            fl.name,
+            fg.food_class,
+            fn.NDB_No,
+            fn.Nutr_No,
+            fn.Nutr_Val,
+            n.Tagname
+        FROM
+            food f,
+            food_lang fl,
+            food_group fg,
+            sr28.nut_data fn,
+            sr28.nutr_def n
+        WHERE
+            f.ndbno = fl.food_ndbno
+            AND f.food_group_id = fg.id
+            AND f.ndbno = fn.NDB_No
+            AND fn.Nutr_No = n.Nutr_No
+            AND n.Tagname IN ('PROCNT', 'CHOCDF', 'FAT')
+            AND fl.lang = #{lang}
+            AND f.ndbno = #{ndbno}
+    </select>
+
+    <select id="selectAlternative" parameterType="map" resultMap="resultMap2">
+        SELECT
+            f.ndbno,
+            f.cost,
+            fl.name,
+            fg.food_class,
+            fn.NDB_No,
+            fn.Nutr_No,
+            fn.Nutr_Val,
+            n.Tagname
+        FROM
+            food f,
+            food_lang fl,
+            food_group fg,
+            sr28.nut_data fn,
+            sr28.nutr_def n
+        WHERE
+            f.ndbno = fl.food_ndbno
+            AND f.food_group_id = fg.id
+            AND f.ndbno = fn.NDB_No
+            AND fn.Nutr_No = n.Nutr_No
+            AND n.Tagname IN ('PROCNT', 'CHOCDF', 'FAT')
+            AND fl.lang = #{lang}
+            AND f.food_group_id = #{groupId}
+            AND f.ndbno != #{ndbno}
+        LIMIT 1
     </select>
 
 </mapper>

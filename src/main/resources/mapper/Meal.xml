@@ -5,19 +5,39 @@
 
 <mapper namespace="Meal">
 
-    <resultMap id="selectResult" type="Meal">
-        <result property="id" column="id"/>
+    <resultMap id="resultMap" type="Meal">
+        <id property="id" column="id"/>
         <result property="name" column="name"/>
         <result property="size" column="size"/>
     </resultMap>
 
-    <select id="selectAll" parameterType="String" resultMap="selectResult">
+    <select id="selectAll" parameterType="String" resultMap="resultMap">
         SELECT
             m.id,
             ml.name,
             m.size
         FROM meal m, meal_lang ml
         WHERE m.id = ml.meal_id AND ml.lang = #{lang}
+    </select>
+
+    <!-- No hay join para preference porque no tiene relación con las otras tablas,
+         pero tampoco es necesario porque se consulta por el userId, lo cual
+         devolverá siempre un registro. De otro modo, se tendría que usar distinct -->
+    <select id="selectByClientId" parameterType="map" resultMap="resultMap">
+        SELECT
+            m.id,
+            ml.name,
+            m.size
+        FROM meal m, meal_lang ml, preference p
+        WHERE m.id = ml.meal_id
+              AND ml.lang = #{lang}
+              AND p.user_id = #{clientId}
+              AND (
+                  (p.meal_count = 3 AND m.id IN (1, 3, 5)) OR
+                  (p.meal_count = 4 AND m.id IN (1, 3, 4, 5)) OR
+                  (p.meal_count = 5 AND m.id IN (1, 2, 3, 4, 5)) OR
+                  (p.meal_count = 6 AND m.id IN (1, 2, 3, 4, 5, 6))
+              )
     </select>
 
 </mapper>

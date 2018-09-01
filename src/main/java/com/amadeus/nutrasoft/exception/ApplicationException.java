@@ -17,9 +17,11 @@ import javax.ws.rs.ext.Provider;
  */
 @Provider
 public class ApplicationException extends RuntimeException implements ExceptionMapper<ApplicationException> {
-    public static final String DIET_PLAN_NOT_FOUND = "diet/plan-not-found";
-    public static final String DIET_MENU_NOT_FOUND = "diet/menu-not-found";
-    public static final String MEAS_PLAN_NOT_FOUND = "meas/plan-not-found";
+    public static final String PLAN_NOT_FOUND = "plan-not-found";
+    public static final String MENU_NOT_FOUND = "menu-not-found";
+    public static final String PLAN_CAN_NOT_DELETE = "plan-can-not-delete";
+    public static final String INACTIVE_USER = "inactive-user";
+    public static final String NO_APPROVED_COACH = "no-approved-coach";
 
     // Este constructor es necesario, si no está ocurre una exception.
     public ApplicationException() {

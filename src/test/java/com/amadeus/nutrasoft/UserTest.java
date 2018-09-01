@@ -1,14 +1,8 @@
 package com.amadeus.nutrasoft;
 
 import com.amadeus.nutrasoft.rest.UserResource;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
-import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
-import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.Test;
@@ -20,9 +14,6 @@ import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 
 import static org.junit.Assert.assertEquals;
@@ -43,56 +34,7 @@ public class UserTest extends JerseyTest {
         return UriBuilder.fromUri("http://localhost:8080").path("nutrasoft-ws").build();
     }
 
-    @Test
-    public void uploadPhoto() {
-        String path = "/Users/montoymi/Pictures/Nutrasoft/InputUpload/";
-        String name = "profile1.jpg";
-        String pathname = path + name;
-
-        FileDataBodyPart filePart = new FileDataBodyPart("file", new File(pathname));
-        filePart.setContentDisposition(FormDataContentDisposition.name("file").fileName(name).build());
-        filePart.setMediaType(MediaType.APPLICATION_OCTET_STREAM_TYPE);
-        MultiPart multiPart = new FormDataMultiPart().bodyPart(filePart);
-
-        WebTarget target = target().path("users/photos");
-        Response response = target.request().post(Entity.entity(multiPart, MediaType.MULTIPART_FORM_DATA_TYPE));
-
-        assertEquals(200, response.getStatus());
-
-        System.out.println("Output received from web method uploadPhoto ....");
-        System.out.println("File uploaded: " + response.readEntity(String.class));
-
-        response.close();
-    }
-
-    @Test
-    public void downloadPhoto() {
-        String path = "/Users/montoymi/Pictures/Nutrasoft/OutputDownload/";
-        String id = "1";
-        String pathname = path + id + ".jpg";
-
-        WebTarget target = target().path("users/photos").path(id);
-        Response response = target.request("image/jpeg").get();
-
-        assertEquals(200, response.getStatus());
-
-        InputStream inputStream = response.readEntity(InputStream.class);
-
-        try {
-            FileUtils.copyInputStreamToFile(inputStream, new File(pathname));
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            IOUtils.closeQuietly(inputStream);
-        }
-
-        System.out.println("Output received from web method downloadPhoto ....");
-        System.out.println("File downloaded to: " + pathname);
-
-        response.close();
-    }
-
-    @Test
+    //@Test
     public void createUser() {
         String xmlHeader = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         String input = xmlHeader + "<user></user>";
@@ -108,7 +50,7 @@ public class UserTest extends JerseyTest {
         response.close();
     }
 
-    @Test
+    //@Test
     public void updateUser() {
         String xmlHeader = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         String input = xmlHeader + "<user></user>";
@@ -124,7 +66,7 @@ public class UserTest extends JerseyTest {
         response.close();
     }
 
-    @Test
+    //@Test
     public void getUserByEmail() {
         WebTarget target = target().path("users").path("renzo@gmail.com");
         Response response = target.request(MediaType.APPLICATION_JSON).get();
@@ -137,23 +79,10 @@ public class UserTest extends JerseyTest {
         response.close();
     }
 
-    @Test
-    public void getUsersByUserType() {
-        WebTarget target = target().path("users").queryParam("user-type", "COACH");
-        Response response = target.request(MediaType.APPLICATION_JSON).get();
-
-        assertEquals(200, response.getStatus());
-
-        System.out.println("Output received from web method getUsersByUserType ....");
-        System.out.println("userList: " + response.readEntity(String.class));
-
-        response.close();
-    }
-
     @ApplicationPath("/")
     public class MyResourceConfig extends ResourceConfig {
         MyResourceConfig() {
-            super(UserResource.class, MultiPartFeature.class);
+            super(UserResource.class);
         }
     }
 }

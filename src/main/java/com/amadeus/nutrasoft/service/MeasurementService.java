@@ -1,27 +1,24 @@
 package com.amadeus.nutrasoft.service;
 
 import com.amadeus.nutrasoft.calc.Calc;
+import com.amadeus.nutrasoft.config.MyBatisSqlSession;
 import com.amadeus.nutrasoft.dao.PlanDAO;
 import com.amadeus.nutrasoft.exception.ApplicationException;
 import com.amadeus.nutrasoft.model.Measurement;
 import com.amadeus.nutrasoft.model.Plan;
 import com.amadeus.nutrasoft.model.User;
-import com.amadeus.nutrasoft.mybatis.MyBatisSqlSession;
 
-import java.util.Calendar;
-
-import static com.amadeus.nutrasoft.constants.Constants.CURRENT_YEAR;
-import static com.amadeus.nutrasoft.exception.ApplicationException.MEAS_PLAN_NOT_FOUND;
+import static com.amadeus.nutrasoft.constants.Constants.LANG_DUMMY;
+import static com.amadeus.nutrasoft.exception.ApplicationException.PLAN_NOT_FOUND;
 
 public class MeasurementService {
     private PlanDAO planDAO = new PlanDAO(MyBatisSqlSession.getSqlSessionFactory());
 
-    public Measurement calculateMeasurement(int clientId) {
+    public Measurement getMeasurementByClientId(int clientId) {
         // Obtiene el plan actual del cliente.
-        // El idioma no es importante porque lo que se necesita son solo las medidas.
-        Plan plan = planDAO.getPlanByClientId(clientId, "es");
+        Plan plan = planDAO.getPlanByClientId(clientId, LANG_DUMMY);
         if (plan == null) {
-            throw new ApplicationException(MEAS_PLAN_NOT_FOUND);
+            throw new ApplicationException(PLAN_NOT_FOUND);
         }
 
         User client = plan.getClient();
@@ -30,17 +27,16 @@ public class MeasurementService {
          * Calcula de porcentaje de grasa corporal.
          */
 
-        final byte fatPct = Calc.bfp(client.getGender(), plan.getHeight(), plan.getNeck(), plan.getWaist(), plan.getHip());
+        // Previene cannot unbox null value.
+        float hip = plan.getHip() != null ? plan.getHip() : 0;
+
+        final byte fatPct = Calc.bfp(client.getGender(), plan.getHeight(), plan.getNeck(), plan.getWaist(), hip);
 
         /*
          * Calcula de porcentaje de agua corporal.
          */
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(client.getBirthdate());
-        float age = CURRENT_YEAR - calendar.get(Calendar.YEAR);
-
-        final byte waterPct = Calc.bwp(client.getGender(), age, plan.getHeight(), plan.getWeight());
+        final byte waterPct = Calc.bwp(client.getGender(), Calc.age(client.getBirthdate()), plan.getHeight(), plan.getWeight());
 
         /*
          * Calcula de porcentaje de hueso corporal.

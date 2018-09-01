@@ -11,6 +11,10 @@ public class NutrientRatio {
     private Byte fatEnergPctMin;
     private Byte fatEnergPctMax;
 
+    private Byte proEnergPct;
+    private Byte choEnergPct;
+    private Byte fatEnergPct;
+
     public Integer getId() {
         return id;
     }
@@ -81,5 +85,29 @@ public class NutrientRatio {
 
     public void setFatEnergPctMax(Byte fatEnergPctMax) {
         this.fatEnergPctMax = fatEnergPctMax;
+    }
+
+    public Byte getProEnergPct() {
+        return proEnergPct;
+    }
+
+    public void setProEnergPct(Byte proEnergPct) {
+        this.proEnergPct = proEnergPct;
+    }
+
+    public Byte getChoEnergPct() {
+        return choEnergPct;
+    }
+
+    public void setChoEnergPct(Byte choEnergPct) {
+        this.choEnergPct = choEnergPct;
+    }
+
+    public Byte getFatEnergPct() {
+        return fatEnergPct;
+    }
+
+    public void setFatEnergPct(Byte fatEnergPct) {
+        this.fatEnergPct = fatEnergPct;
     }
 }

@@ -5,7 +5,7 @@
 
 <mapper namespace="Activity">
 
-    <resultMap id="selectResult" type="Activity">
+    <resultMap id="resultMap" type="Activity">
         <id property="id" column="activity_class_id"/>
         <result property="name" column="activity_class_name"/>
         <collection property="activityList" ofType="Activity">
@@ -20,7 +20,45 @@
         </collection>
     </resultMap>
 
-    <select id="selectAll" parameterType="String" resultMap="selectResult">
+    <select id="selectAll" parameterType="String" resultMap="resultMap">
+        SELECT
+            c.id    activity_class_id,
+            cl.name activity_class_name,
+            t.id    activity_type_id,
+            tl.name activity_type_name,
+            a.id    activity_id,
+            al.name activity_name,
+            a.male_par,
+            a.female_par
+        FROM
+            activity_type c,
+            activity_type_lang cl,
+            activity_type t,
+            activity_type_lang tl,
+            activity a,
+            activity_lang al
+        WHERE
+            c.id = cl.activity_type_id
+            AND t.id = tl.activity_type_id
+            AND a.id = al.activity_id
+            AND c.id = t.activity_class_id
+            AND t.id = a.activity_type_id
+            AND c.active = 1
+            AND cl.lang = #{lang}
+            AND tl.lang = #{lang}
+            AND al.lang = #{lang}
+    </select>
+
+    <!--
+    1   Dormir
+    3   Sentado
+    4   De pie
+    5   Vestirse
+    6   Bañarse
+    8   Comer y beber
+    9   Caminar/dar un paseo
+    -->
+    <select id="selectDefault" parameterType="String" resultMap="resultMap">
         SELECT
             c.id    activity_class_id,
             cl.name activity_class_name,
@@ -46,6 +84,8 @@
             AND cl.lang = #{lang}
             AND tl.lang = #{lang}
             AND al.lang = #{lang}
+            AND a.id IN (1, 3, 4, 5, 6, 8, 9)
     </select>
+
 
 </mapper>

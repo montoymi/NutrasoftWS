@@ -1,8 +1,8 @@
 package com.amadeus.nutrasoft.service;
 
+import com.amadeus.nutrasoft.config.MyBatisSqlSession;
 import com.amadeus.nutrasoft.dao.FoodDAO;
 import com.amadeus.nutrasoft.model.Food;
-import com.amadeus.nutrasoft.mybatis.MyBatisSqlSession;
 
 import java.util.List;
 

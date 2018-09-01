@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Device">
+
+    <resultMap id="resultMap" type="Device">
+        <id property="id" column="id"/>
+        <result property="token" column="token"/>
+        <result property="userId" column="user_id"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="Device" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO device (
+            token,
+            user_id)
+        VALUES (
+            #{token},
+            #{userId})
+    </insert>
+
+    <update id="update" parameterType="Device">
+        UPDATE device
+        SET
+            token   = #{token},
+            user_id = #{userId}
+        WHERE id = #{id}
+    </update>
+
+    <select id="selectByUserId" parameterType="map" resultMap="resultMap">
+        SELECT
+            d.id,
+            d.token,
+            d.user_id
+        FROM device d
+        WHERE d.user_id = #{userId}
+    </select>
+
+</mapper>

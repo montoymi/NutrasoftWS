@@ -5,13 +5,13 @@
 
 <mapper namespace="DietType">
 
-    <resultMap id="selectResult" type="DietType">
-        <result property="id" column="id"/>
+    <resultMap id="resultMap" type="DietType">
+        <id property="id" column="id"/>
         <result property="name" column="name"/>
         <result property="description" column="description"/>
     </resultMap>
 
-    <select id="selectAll" parameterType="String" resultMap="selectResult">
+    <select id="selectAll" parameterType="String" resultMap="resultMap">
         SELECT
             dt.id,
             dtl.name,

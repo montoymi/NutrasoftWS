@@ -11,7 +11,7 @@
             food_ndbno)
         VALUES (
             #{preference.user.id},
-            #{food.ndbNo})
+            #{food.ndbno})
     </insert>
 
     <delete id="deleteAll" parameterType="int">

@@ -5,7 +5,7 @@
 
 <mapper namespace="Diet">
 
-    <resultMap id="selectResult" type="Menu">
+    <resultMap id="resultMap" type="Menu">
         <id property="id" column="menu_id"/>
         <result property="week" column="week"/>
         <result property="day" column="day"/>
@@ -19,12 +19,14 @@
                 <result property="partCode" column="part_code"/>
                 <collection property="dishPartFoodList" ofType="DishPartFood">
                     <id property="id" column="dish_part_food_id"/>
-                    <result property="food.ndbNo" column="NDB_No"/>
+                    <result property="food.ndbno" column="NDB_No"/>
                     <result property="food.name" column="food_name"/>
                     <result property="food.cost" column="cost"/>
+                    <result property="food.foodGroup.id" column="food_group_id"/>
+                    <result property="food.foodGroup.foodType" column="food_type"/>
                     <result property="food.foodGroup.foodClass" column="food_class"/>
                     <collection property="food.foodNutrientList" ofType="FoodNutrient">
-                        <id property="food.ndbNo" column="NDB_No"/>
+                        <id property="food.ndbno" column="NDB_No"/>
                         <id property="nutrient.nutrNo" column="Nutr_No"/>
                         <result property="value" column="Nutr_Val"/>
                         <result property="nutrient.tagName" column="Tagname"/>
@@ -34,7 +36,7 @@
         </collection>
     </resultMap>
 
-    <select id="selectByParams" parameterType="Menu" resultMap="selectResult">
+    <select id="selectByParams" parameterType="Menu" resultMap="resultMap">
         SELECT
             m.id    menu_id,
             m.week,
@@ -52,6 +54,8 @@
             fn.Nutr_No,
             fn.Nutr_Val,
             n.Tagname,
+            fg.id   food_group_id,
+            fg.food_type,
             fg.food_class
         FROM
             menu m,

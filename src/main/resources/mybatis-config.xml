@@ -7,6 +7,9 @@
 
     <typeAliases>
         <typeAlias alias="Activity" type="com.amadeus.nutrasoft.model.Activity"/>
+        <typeAlias alias="Compliance" type="com.amadeus.nutrasoft.model.Compliance"/>
+        <typeAlias alias="ComplianceMeal" type="com.amadeus.nutrasoft.model.ComplianceMeal"/>
+        <typeAlias alias="Device" type="com.amadeus.nutrasoft.model.Device"/>
         <typeAlias alias="DietType" type="com.amadeus.nutrasoft.model.DietType"/>
         <typeAlias alias="Dish" type="com.amadeus.nutrasoft.model.Dish"/>
         <typeAlias alias="DishPart" type="com.amadeus.nutrasoft.model.DishPart"/>
@@ -21,6 +24,7 @@
         <typeAlias alias="Meal" type="com.amadeus.nutrasoft.model.Meal"/>
         <typeAlias alias="Menu" type="com.amadeus.nutrasoft.model.Menu"/>
         <typeAlias alias="MenuMeal" type="com.amadeus.nutrasoft.model.MenuMeal"/>
+        <typeAlias alias="Notification" type="com.amadeus.nutrasoft.model.Notification"/>
         <typeAlias alias="Plan" type="com.amadeus.nutrasoft.model.Plan"/>
         <typeAlias alias="PlanDay" type="com.amadeus.nutrasoft.model.PlanDay"/>
         <typeAlias alias="PlanDayActivity" type="com.amadeus.nutrasoft.model.PlanDayActivity"/>
@@ -44,6 +48,9 @@
 
     <mappers>
         <mapper resource="mapper/Activity.xml"/>
+        <mapper resource="mapper/Compliance.xml"/>
+        <mapper resource="mapper/ComplianceMeal.xml"/>
+        <mapper resource="mapper/Device.xml"/>
         <mapper resource="mapper/Diet.xml"/>
         <mapper resource="mapper/DietType.xml"/>
         <mapper resource="mapper/Dish.xml"/>
@@ -56,6 +63,8 @@
         <mapper resource="mapper/Meal.xml"/>
         <mapper resource="mapper/Menu.xml"/>
         <mapper resource="mapper/MenuMeal.xml"/>
+        <mapper resource="mapper/Notification.xml"/>
+        <mapper resource="mapper/NotificationTemp.xml"/>
         <mapper resource="mapper/NutrientRatio.xml"/>
         <mapper resource="mapper/Plan.xml"/>
         <mapper resource="mapper/PlanDay.xml"/>

@@ -5,9 +5,11 @@
 
 <mapper namespace="Plan">
 
-    <resultMap id="selectResult" type="Plan">
-        <result property="id" column="id"/>
+    <resultMap id="resultMap" type="Plan">
+        <id property="id" column="id"/>
         <result property="goal.id" column="goal_id"/>
+        <result property="goal.name" column="goal_name"/>
+        <result property="goal.description" column="goal_description"/>
         <result property="beginDate" column="begin_date"/>
         <result property="endDate" column="end_date"/>
         <result property="height" column="height_m"/>
@@ -25,7 +27,8 @@
         <result property="client.name" column="name"/>
         <result property="client.gender" column="gender"/>
         <result property="client.birthdate" column="birthdate"/>
-        <result property="goal.name" column="goal_name"/>
+        <result property="client.preferredLang" column="preferred_lang"/>
+        <result property="status" column="status"/>
         <collection property="planDayList" ofType="PlanDay">
             <id property="id" column="plan_day_id"/>
             <result property="day" column="day"/>
@@ -49,11 +52,11 @@
     </resultMap>
 
     <!-- Segundo resultMap que permite agrupar planes por cliente -->
-    <resultMap id="selectResult2" type="User">
+    <resultMap id="resultMap2" type="User">
         <result property="name" column="user_name"/>
         <collection property="planList" ofType="Plan">
             <id property="id" column="id"/>
-            <result property="goal.name" column="goal_name"/>
+            <result property="goal.description" column="goal_description"/>
             <result property="beginDate" column="begin_date"/>
             <result property="endDate" column="end_date"/>
             <result property="status" column="status"/>
@@ -116,7 +119,7 @@
     </delete>
 
 
-    <select id="selectById" parameterType="map" resultMap="selectResult">
+    <select id="selectById" parameterType="map" resultMap="resultMap">
         SELECT
             p.id,
             p.client_id,
@@ -137,8 +140,10 @@
             u.name,
             u.gender,
             u.birthdate,
-            gl.name  goal_name,
-            pd.id    plan_day_id,
+            u.preferred_lang,
+            gl.name                goal_name,
+            gl.description         goal_description,
+            pd.id                  plan_day_id,
             pd.day,
             pd.energ_intake_kcal,
             pd.pro_energ_pct,
@@ -148,12 +153,17 @@
             pd.cho_g,
             pd.fat_g,
             pd.macros_ratio_type,
-            pda.id   plan_day_activity_id,
-            al.name  activity_name,
+            pda.id                 plan_day_activity_id,
+            al.name                activity_name,
             pda.time_h,
-            a.id     activity_id,
+            a.id                   activity_id,
             a.male_par,
-            a.female_par
+            a.female_par,
+            CASE WHEN curdate() > p.end_date
+                THEN 'done'
+            WHEN curdate() BETWEEN p.begin_date AND p.end_date
+                THEN 'in_progress'
+            ELSE 'not_started' END status
         FROM plan p, user u, goal g, goal_lang gl, plan_day pd, plan_day_activity pda,
             activity a, activity_lang al
         WHERE p.client_id = u.id
@@ -168,7 +178,15 @@
               AND p.id = #{id}
     </select>
 
-    <select id="selectByClientId" parameterType="int" resultMap="selectResult">
+    <!--
+        Obtiene el id del último plan creado por un cliente. Luego en base
+        a este se llama al query selectById para completar la información.
+        Se usa para:
+            - Generar la dieta.
+            - Generar las mediciones.
+            - Crear un plan de un cliente en base al último plan.
+     -->
+    <select id="selectByClientId" parameterType="int" resultMap="resultMap">
         SELECT
             p.id,
             p.client_id,
@@ -180,13 +198,13 @@
         LIMIT 1
     </select>
 
-    <select id="selectByCoachId" parameterType="Map" resultMap="selectResult2">
+    <select id="selectByCoachId" parameterType="Map" resultMap="resultMap2">
         SELECT
             p.id,
             p.begin_date,
             p.end_date,
             u.name                 user_name,
-            gl.name                goal_name,
+            gl.description         goal_description,
             CASE WHEN curdate() > p.end_date
                 THEN 'done'
             WHEN curdate() BETWEEN p.begin_date AND p.end_date

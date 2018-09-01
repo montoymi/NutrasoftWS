@@ -5,8 +5,8 @@
 
 <mapper namespace="User">
 
-    <resultMap id="selectResult" type="User">
-        <result property="id" column="id"/>
+    <resultMap id="resultMap" type="User">
+        <id property="id" column="id"/>
         <result property="coach.id" column="coach_id"/>
         <result property="coach.name" column="coach_name"/>
         <result property="userType" column="user_type"/>
@@ -17,6 +17,8 @@
         <result property="phone" column="phone"/>
         <result property="photo" column="photo"/>
         <result property="summary" column="summary"/>
+        <result property="preferredLang" column="preferred_lang"/>
+        <result property="status" column="status"/>
     </resultMap>
 
     <insert id="insert" parameterType="User" useGeneratedKeys="true" keyProperty="id">
@@ -29,7 +31,9 @@
             email,
             phone,
             photo,
-            summary)
+            summary,
+            preferred_lang,
+            status)
         VALUES (
             #{coach.id},
             #{userType},
@@ -39,25 +43,29 @@
             #{email},
             #{phone},
             #{photo},
-            #{summary})
+            #{summary},
+            #{preferredLang},
+            #{status})
     </insert>
 
     <update id="update" parameterType="User">
         UPDATE user
         SET
-            coach_id  = #{coach.id},
-            user_type = #{userType},
-            name      = #{name},
-            gender    = #{gender},
-            birthdate = #{birthdate},
-            email     = #{email},
-            phone     = #{phone},
-            photo     = IF(#{photo} IS NOT NULL, #{photo}, photo),
-            summary   = #{summary}
+            coach_id       = #{coach.id},
+            user_type      = #{userType},
+            name           = #{name},
+            gender         = #{gender},
+            birthdate      = #{birthdate},
+            email          = #{email},
+            phone          = #{phone},
+            photo          = IF(#{photo} IS NOT NULL, #{photo}, photo),
+            summary        = #{summary},
+            preferred_lang = #{preferredLang},
+            status         = #{status}
         WHERE id = #{id}
     </update>
 
-    <select id="selectById" parameterType="int" resultMap="selectResult">
+    <select id="selectById" parameterType="int" resultMap="resultMap">
         SELECT
             id,
             photo
@@ -65,7 +73,7 @@
         WHERE id = #{id}
     </select>
 
-    <select id="selectByEmail" parameterType="String" resultMap="selectResult">
+    <select id="selectByEmail" parameterType="String" resultMap="resultMap">
         SELECT
             a.id,
             a.coach_id,
@@ -76,13 +84,15 @@
             a.birthdate,
             a.email,
             a.phone,
-            a.summary
+            a.summary,
+            a.preferred_lang,
+            a.status
         FROM user a
             LEFT JOIN user b ON a.coach_id = b.id
         WHERE a.email = #{email}
     </select>
 
-    <select id="selectByUserType" resultMap="selectResult">
+    <select id="selectByUserType" parameterType="map" resultMap="resultMap">
         SELECT
             id,
             coach_id,
@@ -92,9 +102,28 @@
             birthdate,
             email,
             phone,
-            summary
+            summary,
+            preferred_lang,
+            status
         FROM user
-        WHERE user_type = #{userType}
+        WHERE user_type = #{userType} AND status = #{status}
+    </select>
+
+    <select id="selectByCoachId" parameterType="map" resultMap="resultMap">
+        SELECT
+            id,
+            coach_id,
+            user_type,
+            name,
+            gender,
+            birthdate,
+            email,
+            phone,
+            summary,
+            preferred_lang,
+            status
+        FROM user
+        WHERE coach_id = #{coachId} AND status = #{status}
     </select>
 
 </mapper>

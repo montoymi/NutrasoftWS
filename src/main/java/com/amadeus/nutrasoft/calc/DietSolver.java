@@ -52,14 +52,13 @@ public class DietSolver {
                 byte grainPct = 60;
                 switch (dishPart.getPartCode()) {
                     case PART_CODE_GARNISH:
-                        // Si además de granos existen vegetales u otros
-                        // alimentos que deben ir en menor cantidad.
+                        // Si además de granos existen vegetales u otros alimentos.
                         if (grainCount < foodCount) {
                             if (food.getFoodGroup().getFoodClass().equals(FOOD_CLASS_GRAIN)) {
-                                // Cereales y tubérculos.
+                                // Establece la proporción de la guarnición de almidón.
                                 weightPct = grainPct / grainCount;
                             } else {
-                                // Vegetales u otros alimentos.
+                                // Establece la proporción de la guarnición de vegetales u otros alimentos.
                                 weightPct = (100 - grainPct) / (foodCount - grainCount);
                             }
                         }
@@ -108,7 +107,7 @@ public class DietSolver {
 
         ObjectHolder<Double> errorHolder = new ObjectHolder<>(0.1);
         PointValuePair solution = optimize(objCoefficients, conCoefficients, conRightSides, errorHolder);
-        dish.setError(errorHolder.param);
+        dish.setError(round(errorHolder.param, 2));
 
         /*
          * Asigna los pesos de los alimentos.

@@ -11,13 +11,14 @@ import java.util.List;
 
 import static javax.ws.rs.core.Response.Status.OK;
 
-@Path("/foods")
+@Path("/")
 @Consumes({MediaType.APPLICATION_JSON})
 @Produces({MediaType.APPLICATION_JSON})
 public class FoodResource {
     private FoodService foodService = new FoodService();
 
     @GET
+    @Path("foods")
     public Response getAllActivities(@QueryParam("lang") String lang) {
         List<Food> foodList = foodService.getAllFoods(lang);
         return Response.status(OK).entity(foodList).build();

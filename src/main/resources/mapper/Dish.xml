@@ -5,7 +5,7 @@
 
 <mapper namespace="Dish">
 
-    <resultMap id="selectResult" type="Dish">
+    <resultMap id="resultMap" type="Dish">
         <id property="id" column="id"/>
         <result property="coach.id" column="coach_id"/>
         <result property="name" column="dish_name"/>
@@ -14,7 +14,7 @@
             <result property="partCode" column="part_code"/>
             <collection property="dishPartFoodList" ofType="DishPartFood">
                 <id property="id" column="dish_part_food_id"/>
-                <result property="food.ndbNo" column="food_ndbno"/>
+                <result property="food.ndbno" column="food_ndbno"/>
                 <result property="food.name" column="food_name"/>
             </collection>
         </collection>
@@ -42,7 +42,7 @@
         WHERE id = #{id}
     </delete>
 
-    <select id="selectById" parameterType="map" resultMap="selectResult">
+    <select id="selectById" parameterType="map" resultMap="resultMap">
         SELECT
             d.id,
             d.coach_id,
@@ -60,7 +60,7 @@
         WHERE dp.dish_id = #{id}
     </select>
 
-    <select id="selectByCoachId" parameterType="int" resultMap="selectResult">
+    <select id="selectByCoachId" parameterType="int" resultMap="resultMap">
         SELECT
             id,
             coach_id,
